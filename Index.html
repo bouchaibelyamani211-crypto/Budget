@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>يونس يمشي للمدرسة</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;600;800&display=swap');
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --sun:    #f9c22e;
+  --sky:    #5bc8f5;
+  --orange: #f77f2a;
+  --rose:   #f25c78;
+  --grass:  #5dbf6e;
+  --cream:  #fffbf0;
+  --brown:  #7a4a20;
+  --ink:    #1a1a2e;
+}
+
+html, body {
+  width:100%; height:100%;
+  background: var(--sky);
+  font-family: 'Baloo Bhaijaan 2', cursive;
+  color: var(--ink);
+  overflow: hidden;
+}
+
+/* ===== SKY BG ===== */
+#sky-bg {
+  position:fixed; inset:0; z-index:0;
+  background: linear-gradient(180deg, #87CEEB 0%, #c8ecff 55%, #d4f0c0 80%, #5dbf6e 100%);
+}
+
+/* Sun */
+#sun {
+  position:fixed;
+  top: -20px; left: -20px;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #fff7aa, #f9c22e);
+  box-shadow: 0 0 40px 16px rgba(249,194,46,0.45), 0 0 80px 40px rgba(249,194,46,0.2);
+  animation: sunrise 1.5s ease-out forwards, sunpulse 4s ease-in-out 1.5s infinite alternate;
+  z-index:1;
+}
+@keyframes sunrise {
+  from { transform: translate(-30px, 30px) scale(0.7); opacity:0; }
+  to   { transform: translate(0,0) scale(1); opacity:1; }
+}
+@keyframes sunpulse {
+  from { box-shadow: 0 0 40px 16px rgba(249,194,46,0.45), 0 0 80px 40px rgba(249,194,46,0.2); }
+  to   { box-shadow: 0 0 55px 22px rgba(249,194,46,0.6), 0 0 100px 55px rgba(249,194,46,0.25); }
+}
+
+/* Sun rays */
+#sun-rays {
+  position:fixed; top:-30px; left:-30px;
+  width:150px; height:150px;
+  z-index:0;
+  animation: spin 20s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.ray {
+  position:absolute;
+  top:50%; left:50%;
+  width:4px; height:60px;
+  background: linear-gradient(to bottom, rgba(255,230,80,0.6), transparent);
+  border-radius:2px;
+  transform-origin: 2px 0px;
+}
+
+/* Clouds */
+.cloud {
+  position:fixed;
+  background:white;
+  border-radius:50px;
+  opacity:0.85;
+  animation: drift var(--cd) ease-in-out infinite alternate;
+  z-index:1;
+}
+.cloud::before, .cloud::after {
+  content:'';
+  position:absolute;
+  background:white;
+  border-radius:50%;
+}
+@keyframes drift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(var(--cx)); }
+}
+
+/* Birds */
+.bird {
+  position:fixed;
+  z-index:2;
+  font-size:18px;
+  animation: flybird var(--bd) linear infinite;
+  opacity:0.7;
+}
+@keyframes flybird {
+  from { transform: translateX(-60px); opacity:0; }
+  10%  { opacity:0.7; }
+  90%  { opacity:0.7; }
+  to   { transform: translateX(110vw); opacity:0; }
+}
+
+/* Ground strip -->
+#ground {
+  position:fixed; bottom:0; left:0; right:0;
+  height:80px;
+  background: linear-gradient(180deg, #7ed87e 0%, #5dbf6e 50%, #4aaa58 100%);
+  z-index:2;
+  border-radius:60% 60% 0 0 / 20px 20px 0 0;
+}
+
+/* Road -->
+#road {
+  position:fixed; bottom:0; left:0; right:0;
+  height:50px; z-index:3;
+  background: #b0956a;
+  border-top: 3px dashed rgba(255,255,255,0.5);
+}
+
+/* ===== SLIDES ===== */
+#slides {
+  position:fixed; inset:0; z-index:10;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.slide {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:16px 20px 100px;
+  opacity:0;
+  transform: scale(0.94) translateY(12px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  text-align:center;
+  pointer-events:none;
+}
+.slide.in {
+  opacity:1; transform:scale(1) translateY(0);
+  pointer-events:all;
+}
+.slide.out {
+  opacity:0; transform:scale(1.04) translateY(-10px);
+}
+
+/* Illustration card */
+.card {
+  width: min(320px, 88vw);
+  background: var(--cream);
+  border-radius: 28px;
+  padding: 14px 14px 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 2px 0 rgba(255,255,255,0.9) inset;
+  margin-bottom: 18px;
+  border: 3px solid rgba(255,255,255,0.7);
+}
+.card svg { display:block; width:100%; border-radius:16px; }
+
+/* Text bubble */
+.bubble {
+  background: white;
+  border-radius: 20px;
+  padding: 14px 22px;
+  max-width: 300px;
+  font-size: clamp(18px, 5vw, 23px);
+  line-height: 1.85;
+  color: #2a2040;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  border: 2.5px solid rgba(255,255,255,0.8);
+  position:relative;
+}
+.bubble::after {
+  content:'';
+  position:absolute;
+  top:-14px; right:30px;
+  border:7px solid transparent;
+  border-bottom-color: white;
+}
+.bubble b { color: var(--orange); }
+.bubble em { color: var(--rose); font-style:normal; font-weight:600; }
+
+/* Title style */
+.title-txt {
+  font-size: clamp(26px,7vw,36px);
+  font-weight:800;
+  color: var(--orange);
+  text-shadow: 2px 3px 0 rgba(0,0,0,0.1), 0 0 20px rgba(249,194,46,0.4);
+  margin-bottom:6px;
+}
+.sub-txt {
+  font-size:clamp(14px,3.5vw,17px);
+  color: #5a7a50;
+  font-weight:600;
+}
+
+/* ===== BOTTOM NAV ===== */
+#bottom-bar {
+  position:fixed; bottom:0; left:0; right:0;
+  height:85px; z-index:20;
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  padding-bottom:10px;
+  background: linear-gradient(transparent, rgba(255,255,255,0.3));
+}
+
+#next-btn {
+  background: var(--orange);
+  color:white;
+  font-family:'Baloo Bhaijaan 2',cursive;
+  font-size:19px; font-weight:800;
+  border:none; border-radius:50px;
+  padding:12px 36px;
+  cursor:pointer;
+  box-shadow: 0 4px 0 #c05a10, 0 6px 20px rgba(247,127,42,0.4);
+  transform: translateY(0);
+  transition: transform 0.1s, box-shadow 0.1s, opacity 0.4s;
+  letter-spacing:0.5px;
+}
+#next-btn:active {
+  transform:translateY(3px);
+  box-shadow:0 1px 0 #c05a10, 0 2px 8px rgba(247,127,42,0.3);
+}
+#next-btn.hide { opacity:0; pointer-events:none; }
+
+/* Progress dots */
+#prog {
+  display:flex; gap:7px; align-items:center;
+}
+.pdot {
+  width:8px; height:8px; border-radius:50%;
+  background:rgba(255,255,255,0.5);
+  transition: all 0.4s ease;
+}
+.pdot.on {
+  background: var(--orange);
+  width:20px; border-radius:10px;
+  box-shadow:0 0 8px rgba(247,127,42,0.6);
+}
+
+/* Confetti burst on last slide */
+.conf {
+  position:fixed;
+  width:10px; height:10px;
+  border-radius:2px;
+  z-index:30;
+  pointer-events:none;
+  animation: conffall var(--cf) ease-in forwards;
+}
+@keyframes conffall {
+  0%   { transform:translate(0,0) rotate(0deg); opacity:1; }
+  100% { transform:translate(var(--cx),var(--cy)) rotate(var(--cr)); opacity:0; }
+}
+
+/* End screen */
+#end-screen {
+  position:fixed; inset:0; z-index:40;
+  background: linear-gradient(135deg, #f9c22e 0%, #f77f2a 100%);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  text-align:center; padding:30px;
+  opacity:0; pointer-events:none;
+  transition: opacity 1s ease;
+}
+#end-screen.show { opacity:1; pointer-events:all; }
+#end-screen p { font-size:clamp(22px,6vw,30px); font-weight:800; color:white; line-height:1.8; text-shadow:0 2px 8px rgba(0,0,0,0.15); }
+#end-screen .big { font-size:clamp(48px,14vw,72px); margin-bottom:10px; }
+</style>
+</head>
+<body>
+
+<div id="sky-bg"></div>
+<div id="sun"></div>
+<div id="sun-rays"></div>
+<div id="ground"></div>
+<div id="road"></div>
+
+<div id="slides">
+
+  <!-- 0: Title -->
+  <div class="slide" id="s0">
+    <div class="card">
+      <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+        <!-- sky gradient -->
+        <defs>
+          <linearGradient id="skyg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#87CEEB"/>
+            <stop offset="100%" stop-color="#c8ecff"/>
+          </linearGradient>
+        </defs>
+        <rect width="300" height="180" fill="url(#skyg)" rx="12"/>
+        <!-- sun top left -->
+        <circle cx="38" cy="38" r="28" fill="#f9c22e" opacity="0.95"/>
+        <circle cx="38" cy="38" r="22" fill="#fff7aa"/>
+        <!-- rays -->
+        <line x1="38" y1="4"  x2="38" y2="14" stroke="#f9c22e" stroke-width="3" stroke-linecap="round"/>
+        <line x1="62" y1="14" x2="56" y2="20" stroke="#f9c22e" stroke-width="3" stroke-linecap="round"/>
+        <line x1="72" y1="38" x2="62" y2="38" stroke="#f9c22e" stroke-width="3" stroke-linecap="round"/>
+        <line x1="62" y1="62" x2="56" y2="56" stroke="#f9c22e" stroke-width="3" stroke-linecap="round"/>
+        <line x1="14" y1="62" x2="20" y2="56" stroke="#f9c22e" stroke-width="3" stroke-linecap="round"/>
+        <line x1="4"  y1="38" x2="14" y2="38" stroke="#f9c22e" stroke-width="3" stroke-linecap="round"/>
+        <!-- clouds -->
+        <ellipse cx="180" cy="35" rx="38" ry="16" fill="white" opacity="0.9"/>
+        <ellipse cx="165" cy="32" rx="22" ry="18" fill="white" opacity="0.9"/>
+        <ellipse cx="200" cy="30" rx="20" ry="16" fill="white" opacity="0.85"/>
+        <ellipse cx="260" cy="55" rx="28" ry="12" fill="white" opacity="0.75"/>
+        <ellipse cx="248" cy="52" rx="18" ry="14" fill="white" opacity="0.75"/>
+        <!-- ground -->
+        <rect x="0" y="145" width="300" height="35" fill="#7ed87e" rx="0"/>
+        <rect x="0" y="155" width="300" height="25" fill="#5dbf6e"/>
+        <!-- path/road -->
+        <rect x="100" y="148" width="100" height="32" fill="#c4a870"/>
+        <line x1="150" y1="150" x2="150" y2="180" stroke="white" stroke-width="3" stroke-dasharray="8,6" stroke-linecap="round"/>
+        <!-- school building far -->
+        <rect x="195" y="95" width="80" height="55" fill="#f0e4c0" rx="3"/>
+        <rect x="185" y="90" width="100" height="14" fill="#e07840" rx="2"/>
+        <!-- roof triangle -->
+        <polygon points="185,90 235,68 285,90" fill="#c85820"/>
+        <!-- flag -->
+        <line x1="235" y1="68" x2="235" y2="48" stroke="#888" stroke-width="2"/>
+        <rect x="235" y="48" width="18" height="12" fill="#e03030" rx="1"/>
+        <!-- windows school -->
+        <rect x="204" y="104" width="16" height="16" fill="#87CEEB" rx="2" stroke="#bbb" stroke-width="1"/>
+        <rect x="228" y="104" width="16" height="16" fill="#87CEEB" rx="2" stroke="#bbb" stroke-width="1"/>
+        <rect x="252" y="104" width="16" height="16" fill="#87CEEB" rx="2" stroke="#bbb" stroke-width="1"/>
+        <!-- door school -->
+        <rect x="222" y="124" width="22" height="26" fill="#a05828" rx="2"/>
+        <circle cx="242" cy="137" r="2" fill="#f9c22e"/>
+        <!-- boy walking happy -->
+        <!-- shadow -->
+        <ellipse cx="78" cy="176" rx="18" ry="5" fill="rgba(0,0,0,0.12)"/>
+        <!-- legs walking -->
+        <rect x="68" y="148" width="11" height="28" rx="4" fill="#3a6ab0" transform="rotate(12 68 148)"/>
+        <rect x="82" y="148" width="11" height="28" rx="4" fill="#3a6ab0" transform="rotate(-8 82 148)"/>
+        <!-- shoes -->
+        <ellipse cx="65" cy="174" rx="10" ry="5" fill="#e03030" transform="rotate(12 65 174)"/>
+        <ellipse cx="90" cy="173" rx="10" ry="5" fill="#e03030" transform="rotate(-8 90 173)"/>
+        <!-- body -->
+        <rect x="62" y="115" width="38" height="38" rx="8" fill="#f77f2a"/>
+        <!-- backpack -->
+        <rect x="94" y="116" width="20" height="28" rx="5" fill="#5a3ab0"/>
+        <rect x="96" y="112" width="16" height="8" rx="3" fill="#7a5ad0"/>
+        <line x1="96" y1="128" x2="112" y2="128" stroke="#9a7ae0" stroke-width="1.5"/>
+        <!-- head -->
+        <circle cx="81" cy="104" r="18" fill="#d4905a"/>
+        <!-- hair -->
+        <ellipse cx="81" cy="89" rx="18" ry="9" fill="#2a1400"/>
+        <!-- happy eyes -->
+        <path d="M74 103 Q78 98 82 103" stroke="#1a0800" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M80 103 Q84 98 88 103" stroke="#1a0800" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- big smile -->
+        <path d="M73 112 Q81 120 89 112" stroke="#c05020" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- arm swinging -->
+        <line x1="62" y1="125" x2="45" y2="118" stroke="#d07838" stroke-width="8" stroke-linecap="round"/>
+        <!-- birds -->
+        <text x="120" y="78" font-size="14" fill="#555">🐦</text>
+        <text x="145" y="65" font-size="10" fill="#666">🐦</text>
+        <!-- sparkles -->
+        <text x="30"  y="80" font-size="12">✨</text>
+      </svg>
+    </div>
+    <p class="title-txt">يونس يمشي للمدرسة!</p>
+    <p class="sub-txt">صباح الخير يا بطل 🌅</p>
+  </div>
+
+  <!-- 1: Wake up -->
+  <div class="slide" id="s1">
+    <div class="card">
+      <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="180" fill="#fff8f0" rx="12"/>
+        <!-- bedroom window with sun rays -->
+        <rect x="180" y="20" width="100" height="80" rx="8" fill="#87CEEB"/>
+        <rect x="228" y="20" width="4" height="80" fill="rgba(255,255,255,0.5)"/>
+        <rect x="180" y="58" width="100" height="4" fill="rgba(255,255,255,0.5)"/>
+        <!-- sun in window -->
+        <circle cx="255" cy="48" r="22" fill="#f9c22e" opacity="0.9"/>
+        <!-- sunbeams through window -->
+        <polygon points="180,20 220,60 180,55" fill="rgba(249,194,46,0.18)"/>
+        <polygon points="180,55 230,90 180,90" fill="rgba(249,194,46,0.12)"/>
+        <polygon points="190,20 260,80 240,100" fill="rgba(249,194,46,0.1)"/>
+        <!-- curtains -->
+        <rect x="175" y="18" width="18" height="84" rx="4" fill="#f77f2a" opacity="0.7"/>
+        <rect x="278" y="18" width="18" height="84" rx="4" fill="#f77f2a" opacity="0.7"/>
+        <!-- bed -->
+        <rect x="10" y="110" width="155" height="65" rx="8" fill="#e0c898"/>
+        <rect x="10" y="108" width="155" height="22" rx="6" fill="#c4a870"/>
+        <!-- pillow -->
+        <rect x="20" y="112" width="65" height="30" rx="10" fill="white" opacity="0.95"/>
+        <!-- blanket -->
+        <rect x="20" y="135" width="140" height="38" rx="6" fill="#f25c78" opacity="0.85"/>
+        <line x1="20" y1="148" x2="155" y2="148" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+        <!-- boy sitting up in bed, stretching arms -->
+        <!-- body -->
+        <rect x="50" y="95" width="40" height="45" rx="8" fill="#ffe0cc"/>
+        <!-- arms stretching wide UP -->
+        <line x1="50" y1="105" x2="25" y2="80" stroke="#d4a880" stroke-width="10" stroke-linecap="round"/>
+        <line x1="90" y1="105" x2="115" y2="78" stroke="#d4a880" stroke-width="10" stroke-linecap="round"/>
+        <!-- head -->
+        <circle cx="70" cy="84" r="20" fill="#d4905a"/>
+        <!-- messy hair -->
+        <ellipse cx="70" cy="67" rx="20" ry="10" fill="#2a1400"/>
+        <line x1="58" y1="64" x2="55" y2="56" stroke="#2a1400" stroke-width="4" stroke-linecap="round"/>
+        <line x1="70" y1="62" x2="68" y2="54" stroke="#2a1400" stroke-width="4" stroke-linecap="round"/>
+        <line x1="80" y1="64" x2="83" y2="56" stroke="#2a1400" stroke-width="3" stroke-linecap="round"/>
+        <!-- waking eyes half open squinting happily -->
+        <path d="M62 82 Q67 78 72 82" stroke="#1a0800" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M70 82 Q75 78 80 82" stroke="#1a0800" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- yawn mouth big -->
+        <ellipse cx="70" cy="92" rx="8" ry="7" fill="#c05020"/>
+        <ellipse cx="70" cy="90" rx="6" ry="3" fill="#f0b090"/>
+        <!-- stars still in eyes (just woke up) -->
+        <text x="30" y="68" font-size="14" opacity="0.6">⭐</text>
+        <text x="100" y="66" font-size="12" opacity="0.5">✨</text>
+        <!-- alarm clock -->
+        <circle cx="175" cy="128" r="18" fill="#f9c22e" stroke="#e8a020" stroke-width="2"/>
+        <circle cx="175" cy="128" r="14" fill="white"/>
+        <line x1="175" y1="128" x2="175" y2="118" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+        <line x1="175" y1="128" x2="181" y2="131" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="168" cy="115" r="3" fill="#f9c22e"/>
+        <circle cx="182" cy="115" r="3" fill="#f9c22e"/>
+      </svg>
+    </div>
+    <div class="bubble">
+      فاق يونس الصبح بكري...<br>
+      مدّ يديه للسما...<br>
+      <b>«آآآه... صباح الخير!»</b> 😴☀️
+    </div>
+  </div>
+
+  <!-- 2: Wash face / breakfast -->
+  <div class="slide" id="s2">
+    <div class="card">
+      <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="180" fill="#e8f8ff" rx="12"/>
+        <!-- bathroom mirror -->
+        <rect x="90" y="10" width="120" height="90" rx="10" fill="#d0eeff" stroke="#b0d8f8" stroke-width="3"/>
+        <!-- reflection glow -->
+        <ellipse cx="150" cy="55" rx="45" ry="40" fill="rgba(255,255,255,0.3)"/>
+        <!-- reflection of boy in mirror (simplified) -->
+        <circle cx="150" cy="42" r="16" fill="#d4905a" opacity="0.7"/>
+        <ellipse cx="150" cy="29" rx="16" ry="8" fill="#2a1400" opacity="0.7"/>
+        <!-- mirror sparkles -->
+        <text x="100" y="28" font-size="11">✨</text>
+        <text x="188" y="25" font-size="10">✨</text>
+        <!-- sink -->
+        <rect x="60" y="118" width="180" height="50" rx="12" fill="#d0e8f0" stroke="#a0c8e0" stroke-width="2"/>
+        <rect x="85" y="125" width="130" height="35" rx="8" fill="#e8f4f8"/>
+        <!-- faucet -->
+        <rect x="142" y="108" width="16" height="20" rx="4" fill="#b0c8d8"/>
+        <ellipse cx="150" cy="107" rx="12" ry="5" fill="#c8d8e8"/>
+        <!-- water drops -->
+        <ellipse cx="150" cy="122" rx="2.5" ry="4" fill="#60b8e8" opacity="0.7"/>
+        <ellipse cx="147" cy="128" rx="2" ry="3" fill="#60b8e8" opacity="0.5"/>
+        <ellipse cx="153" cy="126" rx="2" ry="3" fill="#60b8e8" opacity="0.5"/>
+        <!-- boy washing face -->
+        <!-- body -->
+        <rect x="115" y="105" width="70" height="55" rx="8" fill="#f77f2a" opacity="0.9"/>
+        <!-- towel on shoulder -->
+        <rect x="178" y="108" width="25" height="40" rx="4" fill="white" opacity="0.8"/>
+        <line x1="178" y1="120" x2="203" y2="120" stroke="#eee" stroke-width="1.5"/>
+        <line x1="178" y1="132" x2="203" y2="132" stroke="#eee" stroke-width="1.5"/>
+        <!-- arms at face -->
+        <line x1="115" y1="115" x2="98"  y2="108" stroke="#d07838" stroke-width="9" stroke-linecap="round"/>
+        <line x1="185" y1="115" x2="202" y2="108" stroke="#d07838" stroke-width="9" stroke-linecap="round"/>
+        <!-- head -->
+        <circle cx="150" cy="93" r="20" fill="#d4905a"/>
+        <!-- hair neat now -->
+        <ellipse cx="150" cy="76" rx="20" ry="10" fill="#2a1400"/>
+        <!-- eyes closed washing face splashing -->
+        <path d="M141 92 Q146 88 151 92" stroke="#1a0800" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M149 92 Q154 88 159 92" stroke="#1a0800" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- water splashes on face -->
+        <text x="92"  y="100" font-size="13" opacity="0.7">💧</text>
+        <text x="195" y="98"  font-size="13" opacity="0.7">💧</text>
+        <text x="142" y="76"  font-size="10" opacity="0.6">💦</text>
+      </svg>
+    </div>
+    <div class="bubble">
+      غسل وجهو بالماء البارد...<br>
+      <em>«بريد! بريد!»</em> قال وضحك...<br>
+      وفرشى سنانو زوين 🦷✨
+    </div>
+  </div>
+
+  <!-- 3: Getting dressed -->
+  <div class="slide" id="s3">
+    <div class="card">
+      <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="180" fill="#fff5e8" rx="12"/>
+        <!-- wardrobe open -->
+        <rect x="10" y="10" width="90" height="150" rx="6" fill="#d4a870" stroke="#b08040" stroke-width="2"/>
+        <rect x="10" y="10" width="45" height="150" rx="6" fill="#c49860" stroke="#b08040" stroke-width="1"/>
+        <line x1="55" y1="10" x2="55" y2="160" stroke="#b08040" stroke-width="2"/>
+        <!-- hangers clothes in wardrobe -->
+        <line x1="30" y1="30" x2="50" y2="30" stroke="#888" stroke-width="2"/>
+        <circle cx="40" cy="27" r="4" fill="none" stroke="#888" stroke-width="1.5"/>
+        <rect x="28" y="30" width="24" height="30" rx="4" fill="#f77f2a" opacity="0.7"/>
+        <line x1="65" y1="30" x2="88" y2="30" stroke="#888" stroke-width="2"/>
+        <circle cx="76" cy="27" r="4" fill="none" stroke="#888" stroke-width="1.5"/>
+        <rect x="63" y="30" width="26" height="28" rx="4" fill="#5a8ad0" opacity="0.7"/>
+        <!-- wardrobe handle -->
+        <circle cx="52" cy="88" r="4" fill="#888"/>
+        <circle cx="58" cy="88" r="4" fill="#888"/>
+        <!-- boy dressed in uniform -->
+        <!-- shadow -->
+        <ellipse cx="185" cy="172" rx="35" ry="8" fill="rgba(0,0,0,0.1)"/>
+        <!-- shoes -->
+        <ellipse cx="168" cy="170" rx="16" ry="7" fill="#2a1800"/>
+        <ellipse cx="202" cy="170" rx="16" ry="7" fill="#2a1800"/>
+        <!-- socks -->
+        <rect x="162" y="156" width="12" height="16" rx="3" fill="white"/>
+        <rect x="196" y="156" width="12" height="16" rx="3" fill="white"/>
+        <!-- pants uniform -->
+        <rect x="160" y="130" width="18" height="32" rx="5" fill="#3a5a90"/>
+        <rect x="182" y="130" width="18" height="32" rx="5" fill="#3a5a90"/>
+        <!-- shirt uniform -->
+        <rect x="152" y="95" width="56" height="40" rx="8" fill="#f0f8ff" stroke="#c0d8f0" stroke-width="1.5"/>
+        <!-- collar -->
+        <polygon points="175,95 185,95 180,108" fill="#c0d8f0"/>
+        <!-- pocket badge -->
+        <rect x="158" y="102" width="16" height="12" rx="3" fill="#3a5a90"/>
+        <circle cx="166" cy="108" r="4" fill="#f9c22e"/>
+        <!-- belt -->
+        <rect x="152" y="133" width="56" height="6" rx="3" fill="#8a6040"/>
+        <rect x="174" y="131" width="12" height="10" rx="2" fill="#f9c22e"/>
+        <!-- arms -->
+        <line x1="152" y1="105" x2="132" y2="118" stroke="#d0e0f0" stroke-width="10" stroke-linecap="round"/>
+        <line x1="208" y1="105" x2="228" y2="118" stroke="#d0e0f0" stroke-width="10" stroke-linecap="round"/>
+        <!-- thumbs up left arm -->
+        <circle cx="130" cy="120" r="8" fill="#d4905a"/>
+        <text x="124" y="124" font-size="10">👍</text>
+        <!-- head -->
+        <circle cx="180" cy="82" r="20" fill="#d4905a"/>
+        <!-- hair combed neat -->
+        <ellipse cx="180" cy="65" rx="20" ry="10" fill="#2a1400"/>
+        <path d="M162 66 Q180 58 198 66" stroke="#3a1800" stroke-width="3" fill="none"/>
+        <!-- proud face -->
+        <circle cx="173" cy="81" r="3" fill="white"/>
+        <circle cx="187" cy="81" r="3" fill="white"/>
+        <circle cx="174" cy="82" r="1.8" fill="#1a0800"/>
+        <circle cx="188" cy="82" r="1.8" fill="#1a0800"/>
+        <path d="M172 90 Q180 96 188 90" stroke="#c05020" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- star sparkles around outfit -->
+        <text x="130" y="75" font-size="14">⭐</text>
+        <text x="226" y="80" font-size="12">✨</text>
+        <text x="228" y="108" font-size="10">⭐</text>
+      </svg>
+    </div>
+    <div class="bubble">
+      لبس الزي ديالو...<br>
+      وشاف راسو فالمرايا:<br>
+      <b>«واو! بحال البطل!»</b> ⭐🦸
+    </div>
+  </div>
+
+  <!-- 4: Breakfast -->
+  <div class="slide" id="s4">
+    <div class="card">
+      <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="180" fill="#fffaf0" rx="12"/>
+        <!-- table -->
+        <rect x="20" y="120" width="260" height="16" rx="8" fill="#c4905a"/>
+        <rect x="40" y="134" width="14" height="40" rx="4" fill="#b07840"/>
+        <rect x="246" y="134" width="14" height="40" rx="4" fill="#b07840"/>
+        <!-- tablecloth -->
+        <rect x="22" y="110" width="256" height="18" rx="6" fill="#f8e8d0" stroke="#e8d0b0" stroke-width="1.5"/>
+        <!-- plate -->
+        <ellipse cx="150" cy="112" rx="55" ry="14" fill="#f0f0f0" stroke="#ddd" stroke-width="1.5"/>
+        <ellipse cx="150" cy="110" rx="45" ry="11" fill="white"/>
+        <!-- egg sunny side up on plate -->
+        <ellipse cx="150" cy="109" rx="28" ry="9" fill="#f9c22e" opacity="0.85"/>
+        <ellipse cx="150" cy="108" rx="14" ry="7" fill="#fff9e0"/>
+        <!-- bread slices -->
+        <rect x="85"  y="100" width="35" height="18" rx="4" fill="#e8c080" stroke="#d0a050" stroke-width="1"/>
+        <rect x="180" y="100" width="35" height="18" rx="4" fill="#e8c080" stroke="#d0a050" stroke-width="1"/>
+        <!-- dots on bread (sesame) -->
+        <circle cx="95"  cy="107" r="1.5" fill="#b07830" opacity="0.7"/>
+        <circle cx="105" cy="105" r="1.5" fill="#b07830" opacity="0.7"/>
+        <circle cx="112" cy="109" r="1.5" fill="#b07830" opacity="0.7"/>
+        <!-- glass of milk -->
+        <rect x="240" y="85" width="30" height="40" rx="5" fill="rgba(255,255,255,0.9)" stroke="#d0d0d0" stroke-width="1.5"/>
+        <rect x="242" y="87" width="26" height="18" rx="3" fill="white" opacity="0.8"/>
+        <ellipse cx="255" cy="85" rx="15" ry="5" fill="white" opacity="0.8"/>
+        <!-- milk icon -->
+        <text x="246" y="110" font-size="13">🥛</text>
+        <!-- juice glass -->
+        <rect x="28" y="88" width="28" height="38" rx="5" fill="rgba(255,180,30,0.7)" stroke="#e89020" stroke-width="1.5"/>
+        <ellipse cx="42" cy="88" rx="14" ry="4" fill="rgba(255,200,60,0.8)"/>
+        <text x="32" y="112" font-size="13">🍊</text>
+        <!-- boy sitting eating -->
+        <!-- chair -->
+        <rect x="100" y="105" width="14" height="60" rx="3" fill="#b07840" opacity="0.5"/>
+        <rect x="185" y="105" width="14" height="60" rx="3" fill="#b07840" opacity="0.5"/>
+        <!-- boy body -->
+        <rect x="113" y="60" width="74" height="55" rx="8" fill="#f77f2a"/>
+        <!-- arms eating -->
+        <line x1="113" y1="72" x2="93" y2="95" stroke="#d07838" stroke-width="9" stroke-linecap="round"/>
+        <!-- fork in hand -->
+        <line x1="93" y1="95" x2="88" y2="108" stroke="#888" stroke-width="3" stroke-linecap="round"/>
+        <line x1="86" y1="108" x2="85" y2="116" stroke="#888" stroke-width="2" stroke-linecap="round"/>
+        <line x1="88" y1="108" x2="87" y2="116" stroke="#888" stroke-width="2" stroke-linecap="round"/>
+        <line x1="90" y1="108" x2="89" y2="116" stroke="#888" stroke-width="2" stroke-linecap="round"/>
+        <!-- head -->
+        <circle cx="150" cy="47" r="21" fill="#d4905a"/>
+        <!-- hair -->
+        <ellipse cx="150" cy="30" rx="21" ry="10" fill="#2a1400"/>
+        <!-- eating happy face -->
+        <circle cx="143" cy="46" r="3.5" fill="white"/>
+        <circle cx="157" cy="46" r="3.5" fill="white"/>
+        <circle cx="144" cy="47" r="2" fill="#1a0800"/>
+        <circle cx="158" cy="47" r="2" fill="#1a0800"/>
+        <!-- chubby eating cheeks -->
+        <ellipse cx="136" cy="54" rx="8" ry="5" fill="#e07050" opacity="0.3"/>
+        <ellipse cx="164" cy="54" rx="8" ry="5" fill="#e07050" opacity="0.3"/>
+        <path d="M140 56 Q150 63 160 56" stroke="#c05020" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- steam from food -->
+        <path d="M145 90 Q143 82 145 75" stroke="rgba(200,200,200,0.5)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M152 90 Q154 81 152 73" stroke="rgba(200,200,200,0.4)" stroke-width="2" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="bubble">
+      كلا الفطور مزيان...<br>
+      بيضة وخبز وعصير...<br>
+      <b>«بسم الله!»</b> وكلا بكل بهجة 😋🍳
+    </div>
+  </div>
+
+  <!-- 5: Putting on backpack -->
+  <div class="slide" id="s5">
+    <div class="card">
+      <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="180" fill="#f0f8ff" rx="12"/>
+        <!-- door with morning light -->
+        <rect x="190" y="15" width="95" height="155" rx="8" fill="#c4905a" stroke="#a07038" stroke-width="2"/>
+        <rect x="196" y="21" width="83" height="90" rx="5" fill="#87CEEB" opacity="0.7"/>
+        <!-- sun through door -->
+        <radialGradient id="doorlight" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="#fff7aa" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+        <rect x="190" y="15" width="95" height="155" fill="url(#doorlight)" rx="8"/>
+        <!-- doorknob -->
+        <circle cx="194" cy="98" r="6" fill="#f9c22e" stroke="#e8a020" stroke-width="1.5"/>
+        <!-- floor -->
+        <rect x="0" y="158" width="300" height="22" fill="#e0d0b0"/>
+        <!-- boy with full backpack ready to go -->
+        <ellipse cx="120" cy="172" rx="32" ry="8" fill="rgba(0,0,0,0.12)"/>
+        <!-- shoes -->
+        <ellipse cx="104" cy="168" rx="15" ry="6" fill="#2a1800"/>
+        <ellipse cx="136" cy="168" rx="15" ry="6" fill="#2a1800"/>
+        <!-- legs -->
+        <rect x="98"  y="142" width="14" height="28" rx="5" fill="#3a5a90"/>
+        <rect x="122" y="142" width="14" height="28" rx="5" fill="#3a5a90"/>
+        <!-- body -->
+        <rect x="90" y="103" width="60" height="44" rx="8" fill="#f0f8ff" stroke="#c0d8f0" stroke-width="1.5"/>
+        <!-- BACKPACK big colourful -->
+        <rect x="142" y="98" width="38" height="48" rx="8" fill="#7a40d0"/>
+        <rect x="144" y="92" width="34" height="12" rx="5" fill="#9a60e8"/>
+        <!-- backpack straps -->
+        <path d="M144 100 Q138 112 144 130" stroke="#5a28a8" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <!-- backpack pockets -->
+        <rect x="146" y="116" width="32" height="22" rx="5" fill="#9a60e8" opacity="0.6"/>
+        <line x1="146" y1="127" x2="178" y2="127" stroke="#7a40d0" stroke-width="1.5"/>
+        <!-- zipper pull -->
+        <circle cx="162" cy="116" r="3" fill="#f9c22e"/>
+        <!-- star on backpack -->
+        <text x="152" y="134" font-size="12">⭐</text>
+        <!-- arms -->
+        <line x1="90"  y1="113" x2="70"  y2="125" stroke="#d0e0f0" stroke-width="10" stroke-linecap="round"/>
+        <!-- wave hand -->
+        <circle cx="66" cy="128" r="9" fill="#d4905a"/>
+        <text x="57" y="133" font-size="12">👋</text>
+        <!-- head -->
+        <circle cx="120" cy="90" r="21" fill="#d4905a"/>
+        <ellipse cx="120" cy="73" rx="21" ry="10" fill="#2a1400"/>
+        <!-- excited face -->
+        <circle cx="112" cy="89" r="3.5" fill="white"/>
+        <circle cx="128" cy="89" r="3.5" fill="white"/>
+        <circle cx="113" cy="90" r="2" fill="#1a0800"/>
+        <circle cx="129" cy="90" r="2" fill="#1a0800"/>
+        <!-- big open smile excited -->
+        <path d="M110 99 Q120 107 130 99" stroke="#c05020" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <ellipse cx="120" cy="100" rx="7" ry="4" fill="#dd6030" opacity="0.4"/>
+        <!-- cheeks excited -->
+        <ellipse cx="106" cy="96" rx="7" ry="5" fill="#e07050" opacity="0.3"/>
+        <ellipse cx="134" cy="96" rx="7" ry="5" fill="#e07050" opacity="0.3"/>
+        <!-- sparkles ready to go -->
+        <text x="40"  y="68" font-size="16">🎒</text>
+        <text x="55"  y="52" font-size="12">✨</text>
+        <text x="28"  y="105" font-size="12">⭐</text>
+      </svg>
+    </div>
+    <div class="bubble">
+      حمل الشنطة ديالو...<br>
+      كبسها مزيان على ضهرو...<br>
+      <em>جاهز!</em> <b>القاهر غادي للمدرسة!</b> 🎒💪
+    </div>
+  </div>
+
+  <!-- 6: Walking to school, happy -->
+  <div class="slide" id="s6">
+    <div class="card">
+      <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="skyg2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#87CEEB"/>
+            <stop offset="100%" stop-color="#c8f0ff"/>
+          </linearGradient>
+        </defs>
+        <rect width="300" height="180" fill="url(#skyg2)" rx="12"/>
+        <!-- sun -->
+        <circle cx="255" cy="32" r="26" fill="#f9c22e" opacity="0.95"/>
+        <circle cx="255" cy="32" r="20" fill="#fff7aa"/>
+        <!-- clouds -->
+        <ellipse cx="80"  cy="28" rx="36" ry="14" fill="white" opacity="0.85"/>
+        <ellipse cx="65"  cy="26" rx="20" ry="16" fill="white" opacity="0.85"/>
+        <ellipse cx="95"  cy="25" rx="18" ry="13" fill="white" opacity="0.8"/>
+        <ellipse cx="180" cy="40" rx="28" ry="11" fill="white" opacity="0.7"/>
+        <!-- trees -->
+        <rect x="22" y="115" width="10" height="40" fill="#8b5e3c"/>
+        <circle cx="27" cy="108" r="22" fill="#5dbf6e"/>
+        <circle cx="18" cy="116" r="16" fill="#4aaa58"/>
+        <circle cx="36" cy="114" r="16" fill="#4aaa58"/>
+        <rect x="240" y="118" width="10" height="38" fill="#8b5e3c"/>
+        <circle cx="245" cy="112" r="20" fill="#5dbf6e"/>
+        <circle cx="235" cy="118" r="14" fill="#4aaa58"/>
+        <circle cx="255" cy="116" r="14" fill="#4aaa58"/>
+        <!-- ground -->
+        <rect x="0" y="148" width="300" height="32" fill="#7ed87e" rx="0"/>
+        <!-- path -->
+        <rect x="90" y="148" width="120" height="32" fill="#c4a870"/>
+        <line x1="150" y1="150" x2="150" y2="180" stroke="white" stroke-width="2.5" stroke-dasharray="7,5" stroke-linecap="round"/>
+        <!-- school in distance -->
+        <rect x="215" y="95" width="70" height="55" fill="#f0e4c0" rx="3"/>
+        <rect x="207" y="90" width="86" height="12" fill="#e07840" rx="2"/>
+        <polygon points="207,90 250,72 293,90" fill="#c85820"/>
+        <line x1="250" y1="72" x2="250" y2="55" stroke="#888" stroke-width="2"/>
+        <rect x="250" y="55" width="16" height="10" fill="#e03030" rx="1"/>
+        <rect x="220" y="106" width="14" height="14" fill="#87CEEB" rx="2" stroke="#bbb" stroke-width="1"/>
+        <rect x="240" y="106" width="14" height="14" fill="#87CEEB" rx="2" stroke="#bbb" stroke-width="1"/>
+        <rect x="260" y="106" width="14" height="14" fill="#87CEEB" rx="2" stroke="#bbb" stroke-width="1"/>
+        <rect x="236" y="124" width="18" height="26" fill="#a05828" rx="2"/>
+        <!-- boy walking bouncy -->
+        <ellipse cx="120" cy="174" rx="20" ry="6" fill="rgba(0,0,0,0.12)"/>
+        <!-- shoes -->
+        <ellipse cx="108" cy="170" rx="13" ry="5" fill="#e03030" transform="rotate(-10 108 170)"/>
+        <ellipse cx="132" cy="171" rx="13" ry="5" fill="#e03030" transform="rotate(8 132 171)"/>
+        <!-- legs stride -->
+        <rect x="102" y="144" width="12" height="28" rx="5" fill="#3a5a90" transform="rotate(-12 102 144)"/>
+        <rect x="124" y="144" width="12" height="28" rx="5" fill="#3a5a90" transform="rotate(10 124 144)"/>
+        <!-- body -->
+        <rect x="100" y="110" width="48" height="38" rx="8" fill="#f0f8ff" stroke="#c0d8f0" stroke-width="1.5"/>
+        <!-- backpack -->
+        <rect x="142" y="108" width="28" height="36" rx="7" fill="#7a40d0"/>
+        <rect x="144" y="103" width="24" height="10" rx="4" fill="#9a60e8"/>
+        <text x="147" y="124" font-size="11">⭐</text>
+        <!-- arms swinging happy -->
+        <line x1="100" y1="122" x2="82" y2="132" stroke="#d0e0f0" stroke-width="9" stroke-linecap="round"/>
+        <line x1="148" y1="122" x2="166" y2="116" stroke="#d0e0f0" stroke-width="9" stroke-linecap="round"/>
+        <!-- head -->
+        <circle cx="124" cy="98" r="19" fill="#d4905a"/>
+        <ellipse cx="124" cy="82" rx="19" ry="9" fill="#2a1400"/>
+        <!-- super happy face -->
+        <path d="M116 97 Q121 92 126 97" stroke="#1a0800" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M122 97 Q127 92 132 97" stroke="#1a0800" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M114 107 Q124 115 134 107" stroke="#c05020" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- rosy cheeks -->
+        <ellipse cx="112" cy="105" rx="7" ry="5" fill="#e07050" opacity="0.3"/>
+        <ellipse cx="136" cy="105" rx="7" ry="5" fill="#e07050" opacity="0.3"/>
+        <!-- sparkles path -->
+        <text x="60"  y="155" font-size="11" opacity="0.5">✨</text>
+        <text x="75"  y="148" font-size="9"  opacity="0.4">⭐</text>
+        <text x="85"  y="156" font-size="10" opacity="0.4">✨</text>
+        <!-- birds -->
+        <text x="130" y="68" font-size="13">🐦</text>
+        <text x="158" y="58" font-size="10">🐦</text>
+      </svg>
+    </div>
+    <div class="bubble">
+      خرج من الدار...<br>
+      الشمس ضحكت عليه...<br>
+      <b>يونس مشى مشى مشى</b><br>
+      للمدرسة بالفرحة! 🌞🚶
+    </div>
+  </div>
+
+  <!-- 7: Arrives at school -->
+  <div class="slide" id="s7">
+    <div class="card">
+      <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="skyg3" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#87CEEB"/>
+            <stop offset="100%" stop-color="#b8e8f8"/>
+          </linearGradient>
+        </defs>
+        <rect width="300" height="180" fill="url(#skyg3)" rx="12"/>
+        <!-- big school -->
+        <rect x="40" y="55" width="220" height="115" fill="#f5e8c8" rx="4"/>
+        <rect x="30" y="48" width="240" height="16" fill="#e07840" rx="3"/>
+        <polygon points="30,48 150,18 270,48" fill="#c85820"/>
+        <!-- flag pole -->
+        <line x1="150" y1="18" x2="150" y2="-2" stroke="#888" stroke-width="2.5"/>
+        <rect x="150" y="-2" width="22" height="13" fill="#e03030" rx="1"/>
+        <!-- windows school large -->
+        <rect x="55"  y="68" width="30" height="28" fill="#87CEEB" rx="3" stroke="#c0b080" stroke-width="1.5"/>
+        <rect x="95"  y="68" width="30" height="28" fill="#87CEEB" rx="3" stroke="#c0b080" stroke-width="1.5"/>
+        <rect x="175" y="68" width="30" height="28" fill="#87CEEB" rx="3" stroke="#c0b080" stroke-width="1.5"/>
+        <rect x="215" y="68" width="30" height="28" fill="#87CEEB" rx="3" stroke="#c0b080" stroke-width="1.5"/>
+        <!-- cross window -->
+        <line x1="70"  y1="68" x2="70"  y2="96" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+        <line x1="55"  y1="82" x2="85"  y2="82" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+        <line x1="110" y1="68" x2="110" y2="96" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+        <line x1="95"  y1="82" x2="125" y2="82" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+        <line x1="190" y1="68" x2="190" y2="96" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+        <line x1="175" y1="82" x2="205" y2="82" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+        <line x1="230" y1="68" x2="230" y2="96" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+        <line x1="215" y1="82" x2="245" y2="82" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+        <!-- main door big -->
+        <rect x="123" y="110" width="54" height="60" fill="#a05828" rx="4"/>
+        <rect x="127" y="113" width="22" height="38" fill="#c87840" rx="2"/>
+        <rect x="151" y="113" width="22" height="38" fill="#c87840" rx="2"/>
+        <circle cx="146" cy="132" r="3" fill="#f9c22e"/>
+        <circle cx="154" cy="132" r="3" fill="#f9c22e"/>
+        <!-- school sign -->
+        <rect x="90" y="108" width="120" height="18" rx="4" fill="#e07840"/>
+        <text x="150" y="121" font-family="sans-serif" font-size="10" fill="white" text-anchor="middle" font-weight="bold">المدرسة</text>
+        <!-- friends at door waving -->
+        <!-- friend 1 -->
+        <circle cx="62"  cy="148" r="14" fill="#e8a060"/>
+        <ellipse cx="62" cy="136" rx="14" ry="7" fill="#3a1400"/>
+        <path d="M56 147 Q59 152 62 147" stroke="#6a2a10" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <rect x="54" y="154" width="16" height="22" rx="5" fill="#f25c78"/>
+        <line x1="54"  y1="160" x2="42"  y2="152" stroke="#e8a060" stroke-width="6" stroke-linecap="round"/>
+        <!-- friend 2 -->
+        <circle cx="238" cy="148" r="14" fill="#c47840"/>
+        <ellipse cx="238" cy="136" rx="14" ry="7" fill="#1a0800"/>
+        <path d="M232 147 Q238 153 244 147" stroke="#6a2a10" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <rect x="230" y="154" width="16" height="22" rx="5" fill="#3a6ab0"/>
+        <line x1="246" y1="160" x2="258" y2="152" stroke="#c47840" stroke-width="6" stroke-linecap="round"/>
+        <!-- boy arriving happy -->
+        <ellipse cx="150" cy="176" rx="18" ry="5" fill="rgba(0,0,0,0.1)"/>
+        <rect x="140" y="152" width="12" height="24" rx="4" fill="#3a5a90" transform="rotate(-8 140 152)"/>
+        <rect x="157" y="152" width="12" height="24" rx="4" fill="#3a5a90" transform="rotate(6 157 152)"/>
+        <ellipse cx="140" cy="174" rx="11" ry="5" fill="#e03030"/>
+        <ellipse cx="166" cy="174" rx="11" ry="5" fill="#e03030"/>
+        <rect x="136" y="122" width="44" height="34" rx="7" fill="#f0f8ff" stroke="#c0d8f0" stroke-width="1.5"/>
+        <rect x="175" y="120" width="24" height="30" rx="6" fill="#7a40d0"/>
+        <text x="179" y="136" font-size="10">⭐</text>
+        <line x1="136" y1="132" x2="120" y2="128" stroke="#d0e0f0" stroke-width="8" stroke-linecap="round"/>
+        <!-- head -->
+        <circle cx="158" cy="110" r="18" fill="#d4905a"/>
+        <ellipse cx="158" cy="95"  rx="18" ry="9" fill="#2a1400"/>
+        <!-- big excited smile -->
+        <circle cx="151" cy="109" r="3" fill="white"/>
+        <circle cx="165" cy="109" r="3" fill="white"/>
+        <circle cx="152" cy="110" r="1.8" fill="#1a0800"/>
+        <circle cx="166" cy="110" r="1.8" fill="#1a0800"/>
+        <path d="M149 118 Q158 126 167 118" stroke="#c05020" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- star burst arrival -->
+        <text x="168" y="88" font-size="18">🌟</text>
+        <text x="118" y="90" font-size="14">⭐</text>
+      </svg>
+    </div>
+    <div class="bubble">
+      وصل للمدرسة...<br>
+      صحابو استقبلوه:<br>
+      <em>«يونس جاء!»</em> 🎉<br>
+      <b>يومو باغي يكون زوين!</b> ⭐
+    </div>
+  </div>
+
+  <!-- 8: End / encouragement -->
+  <div class="slide" id="s8">
+    <div class="card">
+      <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="endglow" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stop-color="#fff7aa"/>
+            <stop offset="100%" stop-color="#f9c22e" stop-opacity="0.3"/>
+          </radialGradient>
+        </defs>
+        <rect width="300" height="180" fill="url(#endglow)" rx="12"/>
+        <!-- big star badge -->
+        <text x="150" y="88" font-size="72" text-anchor="middle">⭐</text>
+        <!-- sparkles around -->
+        <text x="38"  y="58"  font-size="22">✨</text>
+        <text x="244" y="55"  font-size="18">✨</text>
+        <text x="22"  y="115" font-size="16">⭐</text>
+        <text x="258" y="112" font-size="20">⭐</text>
+        <text x="120" y="28"  font-size="14">✨</text>
+        <text x="168" y="25"  font-size="12">⭐</text>
+        <text x="58"  y="148" font-size="18">🌈</text>
+        <text x="212" y="148" font-size="18">🌈</text>
+        <!-- text -->
+        <text x="150" y="135" font-family="'Baloo Bhaijaan 2',cursive" font-size="20" fill="#c85820" text-anchor="middle" font-weight="800">أنت بطل!</text>
+        <text x="150" y="158" font-family="'Baloo Bhaijaan 2',cursive" font-size="14" fill="#8a5020" text-anchor="middle">المدرسة تستناك 🏫</text>
+      </svg>
+    </div>
+    <div class="bubble" style="background:linear-gradient(135deg,#fff7e0,#fff); border-color:#f9c22e;">
+      <b>يونس بطل حقيقي!</b><br>
+      فاق، كلا، لبس وخرج...<br>
+      <em>اليوم غادي يكون رائع!</em> 🌟🎒
+    </div>
+  </div>
+
+</div><!-- /slides -->
+
+<div id="bottom-bar">
+  <div id="prog"></div>
+  <button id="next-btn">التالي ←</button>
+</div>
+
+<div id="end-screen">
+  <div class="big">🌟</div>
+  <p>يلا يا بطل!<br>المدرسة تستناك!<br>⭐ &nbsp; ⭐ &nbsp; ⭐</p>
+</div>
+
+<script>
+// ===== CLOUDS =====
+const skyBg = document.getElementById('sky-bg');
+const cloudData = [
+  {w:120,h:35,top:8, left:15,  cx:'18px',  cd:'7s'},
+  {w:90, h:28,top:18,left:50,  cx:'-12px', cd:'9s'},
+  {w:100,h:30,top:6, left:72,  cx:'15px',  cd:'11s'},
+];
+cloudData.forEach(c=>{
+  const el=document.createElement('div');
+  el.className='cloud';
+  el.style.cssText=`width:${c.w}px;height:${c.h}px;top:${c.top}%;left:${c.left}%;--cd:${c.cd};--cx:${c.cx}`;
+  el.style.borderRadius='50px';
+  const b=document.createElement('div');
+  b.style.cssText=`position:absolute;width:${c.w*0.55}px;height:${c.h*1.4}px;border-radius:50%;background:white;top:-40%;left:15%`;
+  const b2=document.createElement('div');
+  b2.style.cssText=`position:absolute;width:${c.w*0.45}px;height:${c.h*1.3}px;border-radius:50%;background:white;top:-30%;left:50%`;
+  el.appendChild(b); el.appendChild(b2);
+  skyBg.appendChild(el);
+});
+
+// ===== SUN RAYS =====
+const raysEl=document.getElementById('sun-rays');
+for(let i=0;i<12;i++){
+  const r=document.createElement('div');
+  r.className='ray';
+  r.style.transform=`rotate(${i*30}deg)`;
+  raysEl.appendChild(r);
+}
+
+// ===== BIRDS =====
+for(let i=0;i<3;i++){
+  const b=document.createElement('div');
+  b.className='bird';
+  b.textContent='🐦';
+  b.style.cssText=`top:${8+Math.random()*20}%;--bd:${12+Math.random()*10}s;animation-delay:${i*4}s`;
+  document.body.appendChild(b);
+}
+
+// ===== SLIDES =====
+const slides=document.querySelectorAll('.slide');
+const progEl=document.getElementById('prog');
+const btn=document.getElementById('next-btn');
+let cur=0;
+
+// Build dots
+slides.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='pdot';
+  progEl.appendChild(d);
+});
+
+function updateDots(){
+  document.querySelectorAll('.pdot').forEach((d,i)=>{
+    d.classList.toggle('on', i===cur);
+  });
+}
+
+function showSlide(idx){
+  slides.forEach(s=>{
+    if(s.classList.contains('in')){
+      s.classList.remove('in'); s.classList.add('out');
+    }
+  });
+  setTimeout(()=>{
+    slides[idx].classList.remove('out');
+    slides[idx].classList.add('in');
+    cur=idx;
+    updateDots();
+    if(idx===slides.length-1){
+      btn.textContent='يلا يا بطل! 🌟';
+      btn.onclick=showEnd;
+    }
+  },200);
+}
+
+function next(){
+  if(cur<slides.length-1) showSlide(cur+1);
+}
+
+btn.onclick=next;
+slides[0].classList.add('in');
+updateDots();
+
+// ===== CONFETTI =====
+function confetti(){
+  const colors=['#f9c22e','#f77f2a','#f25c78','#5dbf6e','#5bc8f5','#9a60e8'];
+  for(let i=0;i<40;i++){
+    setTimeout(()=>{
+      const c=document.createElement('div');
+      c.className='conf';
+      const angle=Math.random()*360;
+      const dist=80+Math.random()*120;
+      const cx=Math.cos(angle*Math.PI/180)*dist+'px';
+      const cy=-(Math.random()*200+100)+'px';
+      c.style.cssText=`background:${colors[Math.floor(Math.random()*colors.length)]};left:${30+Math.random()*40}vw;top:40vh;--cf:${0.8+Math.random()*0.8}s;--cx:${cx};--cy:${cy};--cr:${Math.random()*720-360}deg;animation-delay:${Math.random()*0.3}s`;
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),2000);
+    },i*30);
+  }
+}
+
+function showEnd(){
+  confetti();
+  setTimeout(()=>{
+    document.getElementById('end-screen').classList.add('show');
+  },400);
+  btn.classList.add('hide');
+}
+</script>
+</body>
+</html>
